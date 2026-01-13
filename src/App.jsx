@@ -7,6 +7,7 @@ import {
   CheckCircle2, AlertCircle, Trash2
 } from 'lucide-react';
 import nithishImg from '@assets/bg_removed_nithish_1768310368786.png';
+import cyclerImg from '@assets/cycler.png';
 import { listFolder, uploadFile, getTemporaryLink, deleteFile } from './services/dropbox';
 import { NavigationCards } from './components/NavigationCards';
 
@@ -557,57 +558,45 @@ const CyclingAnimation = () => {
       {/* Separated Cyclers Container */}
       <div className="relative h-full flex items-end justify-center pb-4 max-w-4xl mx-auto w-full">
 
-        {/* Boy Cycler */}
+        {/* First Cycler (Lead) */}
         <motion.div
           animate={{
-            y: [0, -3, 0],
-            x: [0, 5, 0]
+            y: [0, -4, 0],
+            rotate: [0, -2, 2, 0]
           }}
           transition={{
-            duration: 1.2,
+            duration: 1.5,
             repeat: Infinity,
             ease: "easeInOut"
           }}
-          className="relative z-10 mr-12"
+          className="relative z-10 mr-16"
         >
-          <svg width="80" height="60" viewBox="0 0 80 60" className="drop-shadow-[0_0_10px_rgba(168,85,247,0.3)]">
-            <circle cx="20" cy="50" r="8" fill="none" stroke="#374151" strokeWidth="1.5" />
-            <circle cx="55" cy="50" r="8" fill="none" stroke="#374151" strokeWidth="1.5" />
-            <path d="M20 50 L38 50 L50 30 L30 30 Z" fill="none" stroke="#7C3AED" strokeWidth="1.5" />
-            <path d="M38 50 L38 30" fill="none" stroke="#7C3AED" strokeWidth="1.5" />
-            <g className="text-white">
-              <circle cx="35" cy="15" r="5" fill="currentColor" />
-              <path d="M35 20 L35 38 L25 48" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" />
-              <path d="M35 25 L48 35" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-            </g>
-          </svg>
+          <img
+            src={cyclerImg}
+            alt="Cycling"
+            className="w-24 h-auto drop-shadow-[0_0_15px_rgba(234,179,8,0.3)] filter brightness-110"
+          />
         </motion.div>
 
-        {/* Girl Cycler */}
+        {/* Second Cycler (Follower) */}
         <motion.div
           animate={{
-            y: [0, -5, 0],
-            x: [0, -4, 0]
+            y: [0, -6, 0],
+            rotate: [0, 1, -1, 0]
           }}
           transition={{
-            duration: 1.4,
+            duration: 1.8,
             repeat: Infinity,
             ease: "easeInOut",
-            delay: 0.2
+            delay: 0.3
           }}
           className="relative z-10"
         >
-          <svg width="80" height="60" viewBox="0 0 80 60" className="drop-shadow-[0_0_10px_rgba(192,132,252,0.3)]">
-            <circle cx="20" cy="50" r="8" fill="none" stroke="#374151" strokeWidth="1.5" />
-            <circle cx="55" cy="50" r="8" fill="none" stroke="#374151" strokeWidth="1.5" />
-            <path d="M20 50 L38 50 L50 30 L30 30 Z" fill="none" stroke="#C084FC" strokeWidth="1.5" />
-            <path d="M38 50 L38 30" fill="none" stroke="#C084FC" strokeWidth="1.5" />
-            <g className="text-purple-300">
-              <circle cx="35" cy="12" r="4.5" fill="currentColor" />
-              <path d="M35 17 L35 35 L45 45" stroke="currentColor" strokeWidth="3.5" fill="none" strokeLinecap="round" />
-              <path d="M35 22 L50 32" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-            </g>
-          </svg>
+          <img
+            src={cyclerImg}
+            alt="Cycling"
+            className="w-20 h-auto drop-shadow-[0_0_15px_rgba(234,179,8,0.2)] opacity-80 filter brightness-90 grayscale-[20%]"
+          />
         </motion.div>
 
       </div>
