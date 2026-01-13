@@ -267,34 +267,34 @@ const Gallery = ({ onBack }) => {
               </div>
             )}
 
-            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-between p-6">
-              <div className="flex justify-end">
+            <div className="absolute inset-0 bg-black/40 md:bg-black/60 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-500 flex flex-col justify-between p-4 md:p-6">
+              <div className="flex justify-end relative z-10">
                 <button
                   onClick={() => handleDelete(item.path_display, item.name)}
-                  className="p-3 bg-red-500/20 text-red-500 border border-red-500/30 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-lg"
+                  className="p-2 md:p-3 bg-red-500/20 text-red-500 border border-red-500/30 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-lg active:scale-95"
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={14} />
                 </button>
               </div>
 
-              <div>
-                <h4 className="text-white font-bold truncate text-base uppercase mb-1">{item.name}</h4>
-                <div className="flex items-center justify-between gap-4">
+              <div className="relative z-10 bg-black/20 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none p-3 rounded-2xl md:p-0">
+                <h4 className="text-white font-bold truncate text-sm md:text-base uppercase mb-2">{item.name}</h4>
+                <div className="flex items-center justify-between gap-3">
                   <div className="flex gap-2">
                     <button
                       onClick={() => handlePreview(item.path_display)}
-                      className="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white font-bold text-[10px] uppercase hover:bg-white hover:text-black transition-all"
+                      className="px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white font-bold text-[9px] md:text-[10px] uppercase hover:bg-white hover:text-black transition-all active:scale-95"
                     >
                       View
                     </button>
                     <button
                       onClick={() => handleDownload(item.path_display, item.name)}
-                      className="p-2 bg-purple-600 rounded-xl text-white hover:bg-purple-700 transition-all"
+                      className="p-1.5 md:p-2 bg-purple-600 rounded-xl text-white hover:bg-purple-700 transition-all active:scale-95"
                     >
                       <Download size={14} />
                     </button>
                   </div>
-                  <span className="text-zinc-400 text-[10px] font-bold">{(item.size / 1024 / 1024).toFixed(1)}MB</span>
+                  <span className="text-zinc-400 text-[8px] md:text-[10px] font-bold">{(item.size / 1024 / 1024).toFixed(1)}MB</span>
                 </div>
               </div>
             </div>
