@@ -19,7 +19,7 @@ export const refreshAccessToken = async () => {
 
         if (!response.ok) {
             const errorData = await response.json();
-            console.error('Dropbox Token Error:', errorData);
+            console.error('Server Integration Error:', errorData);
             throw new Error('Failed to refresh access token');
         }
 

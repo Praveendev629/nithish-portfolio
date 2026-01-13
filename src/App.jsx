@@ -67,6 +67,7 @@ const Gallery = ({ onBack }) => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [pendingFile, setPendingFile] = useState(null);
   const [customFileName, setCustomFileName] = useState('');
+  const [activeTab, setActiveTab] = useState('photos');
   const fileInputRef = useRef(null);
 
   const showNotification = (message, type = 'info') => {
@@ -119,7 +120,7 @@ const Gallery = ({ onBack }) => {
   useEffect(() => {
     if (!isLocked) {
       fetchItems();
-      showNotification('Connected to Dropbox', 'success');
+      showNotification('Connected to Secure Server', 'success');
     }
   }, [isLocked]);
 
@@ -376,8 +377,25 @@ const Gallery = ({ onBack }) => {
         )}
       </AnimatePresence>
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
-        <button onClick={onBack} className="text-purple-500 font-bold flex items-center gap-2">← Back Home</button>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-8">
+        <div className="flex flex-col gap-4">
+          <button onClick={onBack} className="text-purple-500 font-bold flex items-center gap-2">← Back Home</button>
+
+          <div className="flex bg-zinc-900/50 p-1 rounded-2xl border border-zinc-800">
+            <button
+              onClick={() => setActiveTab('photos')}
+              className={`px-8 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${activeTab === 'photos' ? 'bg-purple-600 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+            >
+              Captured Moments
+            </button>
+            <button
+              onClick={() => setActiveTab('videos')}
+              className={`px-8 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${activeTab === 'videos' ? 'bg-purple-600 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+            >
+              Motion Gallery
+            </button>
+          </div>
+        </div>
 
         <div className="flex items-center gap-4 w-full md:w-auto">
           <input
@@ -393,7 +411,7 @@ const Gallery = ({ onBack }) => {
             className="flex-1 md:flex-none flex items-center justify-center gap-3 bg-purple-600/10 border border-purple-500/30 px-6 py-4 rounded-2xl font-bold text-purple-500 hover:bg-purple-600 hover:text-white transition-all active:scale-95 disabled:opacity-50"
           >
             {uploading ? <Loader2 size={18} className="animate-spin" /> : <Upload size={18} />}
-            {uploading ? 'Processing...' : 'Upload Media'}
+            {uploading ? 'Processing...' : 'Upload to Server'}
           </button>
         </div>
       </div>
@@ -401,23 +419,39 @@ const Gallery = ({ onBack }) => {
       {loading ? (
         <div className="flex-1 flex flex-col items-center justify-center py-20">
           <Loader2 size={48} className="text-purple-500 animate-spin mb-4" />
-          <p className="text-zinc-500 font-bold uppercase tracking-widest text-sm">Synchronizing Cloud...</p>
+          <p className="text-zinc-500 font-bold uppercase tracking-widest text-sm">Synchronizing Server...</p>
         </div>
       ) : (
-        <div className="space-y-12">
-          {items.photos.length > 0 && (
-            <MediaGrid items={items.photos} title="Captured Moments" icon={ImageIcon} />
-          )}
+        <div className="min-h-[400px]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {activeTab === 'photos' && (
+                items.photos.length > 0 ? (
+                  <MediaGrid items={items.photos} title="Captured Moments" icon={ImageIcon} />
+                ) : (
+                  <div className="py-20 text-center">
+                    <p className="text-zinc-500 font-bold uppercase tracking-widest text-sm">No photos found in secure archive.</p>
+                  </div>
+                )
+              )}
 
-          {items.videos.length > 0 && (
-            <MediaGrid items={items.videos} title="Motion Gallery" icon={Video} />
-          )}
-
-          {items.photos.length === 0 && items.videos.length === 0 && (
-            <div className="py-20 text-center">
-              <p className="text-zinc-500 font-bold uppercase tracking-widest text-sm">The vault is currently empty.</p>
-            </div>
-          )}
+              {activeTab === 'videos' && (
+                items.videos.length > 0 ? (
+                  <MediaGrid items={items.videos} title="Motion Gallery" icon={Video} />
+                ) : (
+                  <div className="py-20 text-center">
+                    <p className="text-zinc-500 font-bold uppercase tracking-widest text-sm">No motion media found in secure archive.</p>
+                  </div>
+                )
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
       )}
     </Section>
