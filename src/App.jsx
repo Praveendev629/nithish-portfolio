@@ -7,7 +7,7 @@ import {
   CheckCircle2, AlertCircle, Trash2
 } from 'lucide-react';
 import nithishImg from '@assets/bg_removed_nithish_1768310368786.png';
-import cyclerImg from '@assets/cycler.png';
+import cyclerImg from './assets/cycler.png';
 import { listFolder, uploadFile, getTemporaryLink, deleteFile } from './services/dropbox';
 import { NavigationCards } from './components/NavigationCards';
 
@@ -569,12 +569,12 @@ const CyclingAnimation = () => {
             repeat: Infinity,
             ease: "easeInOut"
           }}
-          className="relative z-10 mr-16"
+          className="relative z-10 mr-20"
         >
           <img
             src={cyclerImg}
             alt="Cycling"
-            className="w-24 h-auto drop-shadow-[0_0_15px_rgba(234,179,8,0.3)] filter brightness-110"
+            className="w-32 h-auto drop-shadow-[0_0_20px_rgba(234,179,8,0.4)] filter brightness-110"
           />
         </motion.div>
 
@@ -595,7 +595,7 @@ const CyclingAnimation = () => {
           <img
             src={cyclerImg}
             alt="Cycling"
-            className="w-20 h-auto drop-shadow-[0_0_15px_rgba(234,179,8,0.2)] opacity-80 filter brightness-90 grayscale-[20%]"
+            className="w-24 h-auto drop-shadow-[0_0_15px_rgba(234,179,8,0.2)] opacity-80 filter brightness-90 grayscale-[20%]"
           />
         </motion.div>
 
