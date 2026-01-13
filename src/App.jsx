@@ -530,107 +530,125 @@ const Gallery = ({ onBack }) => {
 
 const WaterAnimation = () => {
   return (
-    <div className="absolute bottom-0 left-0 w-full h-32 overflow-hidden pointer-events-none z-10">
-      {/* Wave Layers */}
+    <div className="absolute top-0 left-0 w-full h-40 overflow-hidden pointer-events-none z-10">
+      {/* Wave Layers - Now at the Top */}
       <div className="absolute inset-0">
         <motion.svg
           viewBox="0 0 1440 120"
           preserveAspectRatio="none"
-          className="absolute bottom-0 w-[200%] h-24 opacity-30 fill-purple-900/40"
-          animate={{ x: [-1440, 0] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+          className="absolute top-0 w-[200%] h-24 opacity-30 fill-purple-900/40"
+          animate={{ x: [-1440, 0], scaleY: [1, 1.1, 1] }}
+          transition={{
+            x: { duration: 12, repeat: Infinity, ease: "linear" },
+            scaleY: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+          }}
         >
-          <path d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z" />
+          <path d="M0,64L80,58.7C160,53,320,43,480,48C640,53,800,75,960,80C1120,85,1280,75,1360,69.3L1440,64L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z" />
         </motion.svg>
         <motion.svg
           viewBox="0 0 1440 120"
           preserveAspectRatio="none"
-          className="absolute bottom-0 w-[200%] h-28 opacity-40 fill-purple-600/20"
-          animate={{ x: [0, -1440] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+          className="absolute top-0 w-[200%] h-28 opacity-40 fill-purple-600/20"
+          animate={{ x: [0, -1440], scaleY: [1, 0.9, 1] }}
+          transition={{
+            x: { duration: 8, repeat: Infinity, ease: "linear" },
+            scaleY: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+          }}
         >
-          <path d="M0,32L60,42.7C120,53,240,75,360,74.7C480,75,600,53,720,48C840,43,960,53,1080,58.7C1200,64,1320,64,1380,64L1440,64L1440,120L1380,120C1320,120,1200,120,1080,120C960,120,840,120,720,120C600,120,480,120,360,120C240,120,120,120,60,120L0,120Z" />
+          <path d="M0,32L60,42.7C120,53,240,75,360,74.7C480,75,600,53,720,48C840,43,960,53,1080,58.7C1200,64,1320,64,1380,64L1440,64L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z" />
         </motion.svg>
         <motion.svg
           viewBox="0 0 1440 120"
           preserveAspectRatio="none"
-          className="absolute bottom-0 w-[200%] h-20 opacity-50 fill-purple-500/10"
-          animate={{ x: [-1440, 0], y: [0, 5, 0] }}
+          className="absolute top-0 w-[200%] h-20 opacity-50 fill-purple-500/10"
+          animate={{ x: [-1440, 0], y: [0, 8, 0] }}
           transition={{
             x: { duration: 15, repeat: Infinity, ease: "linear" },
             y: { duration: 3, repeat: Infinity, ease: "easeInOut" }
           }}
         >
-          <path d="M0,96L120,101.3C240,107,480,117,720,117C960,117,1200,107,1320,101.3L1440,96L1440,120L1320,120C1200,120,960,120,720,120C480,120,240,120,120,120L0,120Z" />
+          <path d="M0,96L120,90.7C240,85,480,75,720,75C960,75,1200,85,1320,90.7L1440,96L1440,0L1320,0C1200,0,960,0,720,0C480,0,240,0,120,0L0,0Z" />
         </motion.svg>
       </div>
 
-      {/* Fish ecosystem */}
-      {[...Array(5)].map((_, i) => (
+      {/* Enhanced Splash Physics */}
+      {[0, 1].map(side => (
+        <div key={side} className={`absolute top-0 ${side === 0 ? 'left-0' : 'right-0'} w-48 h-full`}>
+          {[...Array(15)].map((_, j) => (
+            <motion.div
+              key={j}
+              initial={{ opacity: 0, y: 0, x: side === 0 ? 0 : 48 }}
+              animate={{
+                opacity: [0, 0.8, 0],
+                y: [0, 60 + Math.random() * 100],
+                x: side === 0 ? [0, 30 + Math.random() * 50] : [48, -30 - Math.random() * 50],
+                scale: [0.2, 1.5, 0.2],
+                rotate: [0, Math.random() * 360]
+              }}
+              transition={{
+                duration: 1.5 + Math.random() * 1.5,
+                repeat: Infinity,
+                delay: j * 0.15,
+                ease: [0.23, 1, 0.32, 1] // Custom cubic-bezier for physics feel
+              }}
+              className="absolute top-4 w-1.5 h-1.5 bg-purple-300/40 rounded-full blur-[0.4px]"
+            />
+          ))}
+          {/* Mist effect at corners */}
+          <motion.div
+            animate={{ opacity: [0.1, 0.3, 0.1], scale: [1, 1.2, 1] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            className={`absolute top-0 ${side === 0 ? 'left-0' : 'right-0'} w-32 h-32 bg-purple-600/10 rounded-full blur-[40px]`}
+          />
+        </div>
+      ))}
+
+      {/* Fish ecosystem - Floating Higher */}
+      {[...Array(6)].map((_, i) => (
         <motion.div
           key={i}
-          initial={{ x: i % 2 === 0 ? '-10%' : '110%', y: 20 + Math.random() * 60 }}
+          initial={{ x: i % 2 === 0 ? '-10%' : '110%', y: 10 + Math.random() * 40 }}
           animate={{
             x: i % 2 === 0 ? '110%' : '-10%',
-            y: [null, 30 + Math.random() * 30, 10 + Math.random() * 30],
-            rotate: i % 2 === 0 ? [0, 5, -5, 0] : [180, 185, 175, 180]
+            y: [null, 20 + Math.random() * 20, 5 + Math.random() * 20],
+            rotate: i % 2 === 0 ? [0, 10, -10, 0] : [180, 190, 170, 180]
           }}
           transition={{
-            x: { duration: 15 + i * 2, repeat: Infinity, ease: "linear" },
-            y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-            rotate: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+            x: { duration: 18 + i * 3, repeat: Infinity, ease: "linear" },
+            y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+            rotate: { duration: 2.5, repeat: Infinity, ease: "easeInOut" }
           }}
-          className="absolute z-20 opacity-60"
+          className="absolute z-20 opacity-40 hover:opacity-100 transition-opacity"
         >
-          <svg width="24" height="14" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M2 7C2 7 6 2 12 2C18 2 22 7 22 7C22 7 18 12 12 12C6 12 2 7 2 7Z" fill="#A855F7" fillOpacity="0.4" />
-            <path d="M20 7L24 4V10L20 7Z" fill="#A855F7" fillOpacity="0.6" />
-            <circle cx="6" cy="6" r="1" fill="white" fillOpacity="0.8" />
+          <svg width="30" height="18" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 7C2 7 6 2 12 2C18 2 22 7 22 7C22 7 18 12 12 12C6 12 2 7 2 7Z" fill="#A855F7" fillOpacity="0.5" />
+            <path d="M20 7L24 4V10L20 7Z" fill="#A855F7" fillOpacity="0.7" />
+            <motion.circle
+              cx="18" cy="7" r="0.8" fill="white"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1, repeat: Infinity }}
+            />
           </svg>
         </motion.div>
       ))}
 
-      {/* Edge Splash Effects */}
-      {[0, 1].map(side => (
-        <div key={side} className={`absolute bottom-0 ${side === 0 ? 'left-0' : 'right-0'} w-32 h-full`}>
-          {[...Array(8)].map((_, j) => (
-            <motion.div
-              key={j}
-              initial={{ opacity: 0, y: 0, x: side === 0 ? 0 : 32 }}
-              animate={{
-                opacity: [0, 0.6, 0],
-                y: [-10, -80 - Math.random() * 60],
-                x: side === 0 ? [0, 20 + Math.random() * 30] : [32, -20 - Math.random() * 30],
-                scale: [0, 1.2, 0.4]
-              }}
-              transition={{
-                duration: 2 + Math.random() * 2,
-                repeat: Infinity,
-                delay: j * 0.3,
-                ease: "easeOut"
-              }}
-              className="absolute bottom-4 w-1.5 h-1.5 bg-purple-400/30 rounded-full blur-[0.5px]"
-            />
-          ))}
-        </div>
-      ))}
-
-      {/* Surface Bubbles */}
-      {[...Array(15)].map((_, i) => (
+      {/* Rain-like Droplets splashing on surface */}
+      {[...Array(20)].map((_, i) => (
         <motion.div
           key={i}
-          initial={{ opacity: 0, y: 20, x: Math.random() * 100 + '%' }}
+          initial={{ opacity: 0, scale: 0, x: Math.random() * 100 + '%', y: 0 }}
           animate={{
-            opacity: [0, 0.4, 0],
-            y: [-10, -40 - Math.random() * 30],
+            opacity: [0, 0.5, 0],
+            scale: [0, 1.5, 0],
+            y: [0, 20 + Math.random() * 40]
           }}
           transition={{
-            duration: 3 + Math.random() * 2,
+            duration: 2 + Math.random() * 2,
             repeat: Infinity,
-            delay: Math.random() * 5,
-            ease: "easeInOut"
+            delay: Math.random() * 10,
+            ease: "easeOut"
           }}
-          className="absolute bottom-8 w-1 h-1 bg-white/20 rounded-full border border-white/10"
+          className="absolute top-2 w-1 h-1 bg-white/30 rounded-full blur-[1px]"
         />
       ))}
     </div>
@@ -864,8 +882,8 @@ const App = () => {
         </AnimatePresence>
       </main>
 
-      <footer className="border-t border-zinc-900 bg-black mt-auto relative overflow-hidden pb-16">
-        {/* Water animation at the base */}
+      <footer className="border-t border-zinc-900 bg-black mt-auto relative overflow-hidden">
+        {/* Water animation at the top section of footer */}
         <WaterAnimation />
 
         {/* Decorative elements */}
