@@ -460,23 +460,23 @@ const Gallery = ({ onBack }) => {
 
 const CyclingAnimation = () => {
   return (
-    <div className="relative w-full h-32 overflow-hidden border-t border-zinc-900 bg-black/50">
+    <div className="relative w-full h-32 overflow-hidden bg-black/50 border-y border-zinc-900/50">
       {/* Moving Tree Shadows */}
       <div className="absolute inset-0 flex">
-        {[...Array(10)].map((_, i) => (
+        {[...Array(12)].map((_, i) => (
           <motion.div
             key={i}
             initial={{ x: '100vw' }}
             animate={{ x: '-20vw' }}
             transition={{
-              duration: 8,
+              duration: 7,
               repeat: Infinity,
-              delay: i * 1.2,
+              delay: i * 0.8,
               ease: "linear"
             }}
-            className="absolute top-0 w-32 h-full"
+            className="absolute top-0 w-32 h-full opacity-30"
           >
-            <div className="w-full h-full bg-gradient-to-b from-purple-900/5 via-purple-900/10 to-transparent skew-x-[-20deg] blur-xl" />
+            <div className="w-full h-full bg-gradient-to-b from-purple-900/10 via-purple-600/5 to-transparent skew-x-[-15deg] blur-2xl" />
           </motion.div>
         ))}
       </div>
@@ -484,58 +484,78 @@ const CyclingAnimation = () => {
       {/* Road line */}
       <div className="absolute bottom-6 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-zinc-800 to-transparent" />
 
-      {/* Boy and Girl Cycling */}
-      <motion.div
-        animate={{
-          y: [0, -4, 0],
-          rotate: [0, -1, 1, 0]
-        }}
-        transition={{
-          duration: 1.5,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10"
-      >
-        <svg width="120" height="80" viewBox="0 0 120 80" className="drop-shadow-[0_0_15px_rgba(168,85,247,0.4)]">
-          {/* Bicycle Wheels */}
-          <circle cx="35" cy="65" r="12" fill="none" stroke="currentColor" strokeWidth="2" className="text-zinc-700" />
-          <circle cx="85" cy="65" r="12" fill="none" stroke="currentColor" strokeWidth="2" className="text-zinc-700" />
+      {/* Separated Cyclers Container */}
+      <div className="relative h-full flex items-end justify-center pb-4 max-w-4xl mx-auto w-full">
 
-          {/* Bicycle Frame */}
-          <path d="M35 65 L60 65 L80 40 L50 40 Z" fill="none" stroke="currentColor" strokeWidth="2" className="text-purple-600" />
-          <path d="M60 65 L60 40" fill="none" stroke="currentColor" strokeWidth="2" className="text-purple-600" />
+        {/* Boy Cycler */}
+        <motion.div
+          animate={{
+            y: [0, -3, 0],
+            x: [0, 5, 0]
+          }}
+          transition={{
+            duration: 1.2,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="relative z-10 mr-12"
+        >
+          <svg width="80" height="60" viewBox="0 0 80 60" className="drop-shadow-[0_0_10px_rgba(168,85,247,0.3)]">
+            <circle cx="20" cy="50" r="8" fill="none" stroke="#374151" strokeWidth="1.5" />
+            <circle cx="55" cy="50" r="8" fill="none" stroke="#374151" strokeWidth="1.5" />
+            <path d="M20 50 L38 50 L50 30 L30 30 Z" fill="none" stroke="#7C3AED" strokeWidth="1.5" />
+            <path d="M38 50 L38 30" fill="none" stroke="#7C3AED" strokeWidth="1.5" />
+            <g className="text-white">
+              <circle cx="35" cy="15" r="5" fill="currentColor" />
+              <path d="M35 20 L35 38 L25 48" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" />
+              <path d="M35 25 L48 35" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+            </g>
+          </svg>
+        </motion.div>
 
-          {/* Boy (Back) */}
-          <g className="text-white">
-            <circle cx="55" cy="25" r="6" fill="currentColor" /> {/* Head */}
-            <path d="M55 31 L55 50 L45 60" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round" /> {/* Body & Legs */}
-            <path d="M55 35 L70 45" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" /> {/* Arm */}
-          </g>
+        {/* Girl Cycler */}
+        <motion.div
+          animate={{
+            y: [0, -5, 0],
+            x: [0, -4, 0]
+          }}
+          transition={{
+            duration: 1.4,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.2
+          }}
+          className="relative z-10"
+        >
+          <svg width="80" height="60" viewBox="0 0 80 60" className="drop-shadow-[0_0_10px_rgba(192,132,252,0.3)]">
+            <circle cx="20" cy="50" r="8" fill="none" stroke="#374151" strokeWidth="1.5" />
+            <circle cx="55" cy="50" r="8" fill="none" stroke="#374151" strokeWidth="1.5" />
+            <path d="M20 50 L38 50 L50 30 L30 30 Z" fill="none" stroke="#C084FC" strokeWidth="1.5" />
+            <path d="M38 50 L38 30" fill="none" stroke="#C084FC" strokeWidth="1.5" />
+            <g className="text-purple-300">
+              <circle cx="35" cy="12" r="4.5" fill="currentColor" />
+              <path d="M35 17 L35 35 L45 45" stroke="currentColor" strokeWidth="3.5" fill="none" strokeLinecap="round" />
+              <path d="M35 22 L50 32" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+            </g>
+          </svg>
+        </motion.div>
 
-          {/* Girl (Front) */}
-          <g className="text-purple-400">
-            <circle cx="75" cy="20" r="5" fill="currentColor" /> {/* Head */}
-            <path d="M75 25 L75 45 L85 55" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round" /> {/* Body & Legs */}
-            <path d="M75 30 L90 40" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" /> {/* Arm */}
-          </g>
-        </svg>
-      </motion.div>
+      </div>
 
       {/* Particle dust */}
-      <div className="absolute inset-0">
-        {[...Array(20)].map((_, i) => (
+      <div className="absolute inset-0 pointer-events-none">
+        {[...Array(25)].map((_, i) => (
           <motion.div
             key={i}
-            initial={{ x: '100vw', y: 70 + Math.random() * 10 }}
+            initial={{ x: '100vw', y: 60 + Math.random() * 20 }}
             animate={{ x: '-10vw' }}
             transition={{
-              duration: Math.random() * 3 + 2,
+              duration: Math.random() * 2 + 1.5,
               repeat: Infinity,
-              delay: Math.random() * 5,
+              delay: Math.random() * 4,
               ease: "linear"
             }}
-            className="absolute w-1 h-1 bg-purple-500/20 rounded-full blur-[1px]"
+            className="absolute w-0.5 h-0.5 bg-purple-500/30 rounded-full blur-[0.5px]"
           />
         ))}
       </div>
@@ -770,12 +790,14 @@ const App = () => {
         </AnimatePresence>
       </main>
 
-      <footer className="pt-20 border-t border-zinc-900 bg-black mt-auto relative overflow-hidden">
+      <footer className="border-t border-zinc-900 bg-black mt-auto relative overflow-hidden">
+        <CyclingAnimation />
+
         {/* Decorative elements */}
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-600/5 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/5 rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="container mx-auto px-6 mb-20">
+        <div className="container mx-auto px-6 py-20">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-16 items-start">
             <div className="md:col-span-5 space-y-8">
               <div className="text-3xl font-black text-purple-500 tracking-tighter">NITHISH<span className="text-white">.T</span></div>
@@ -823,8 +845,6 @@ const App = () => {
             </div>
           </div>
         </div>
-
-        <CyclingAnimation />
 
         <div className="py-10 border-t border-zinc-900/50 px-6 bg-zinc-950/50 relative z-20">
           <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
