@@ -131,3 +131,32 @@ export const uploadFile = async (file) => {
         throw error;
     }
 };
+
+export const deleteFile = async (path) => {
+    if (!accessToken) await refreshAccessToken();
+
+    try {
+        const response = await fetch('https://api.dropboxapi.com/2/files/delete_v2', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ path })
+        });
+
+        if (response.status === 401) {
+            await refreshAccessToken();
+            return deleteFile(path);
+        }
+
+        if (!response.ok) {
+            throw new Error('Failed to delete file');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error deleting file:', error);
+        throw error;
+    }
+};

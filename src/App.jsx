@@ -4,10 +4,10 @@ import {
   Menu, X, Lock, Send, Smartphone, MessageSquare,
   Image as ImageIcon, Video, Github, Linkedin, Instagram,
   ExternalLink, Sparkles, Download, Upload, Loader2,
-  CheckCircle2, AlertCircle
+  CheckCircle2, AlertCircle, Trash2
 } from 'lucide-react';
 import nithishImg from '@assets/bg_removed_nithish_1768310368786.png';
-import { listFolder, uploadFile, getTemporaryLink } from './services/dropbox';
+import { listFolder, uploadFile, getTemporaryLink, deleteFile } from './services/dropbox';
 import { NavigationCards } from './components/NavigationCards';
 
 const Navbar = ({ isOpen, setIsOpen, onNavigate }) => (
@@ -60,10 +60,13 @@ const Gallery = ({ onBack }) => {
   const [isLocked, setIsLocked] = useState(true);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState({ photos: [], videos: [] });
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [pendingFile, setPendingFile] = useState(null);
+  const [customFileName, setCustomFileName] = useState('');
   const fileInputRef = useRef(null);
 
   const showNotification = (message, type = 'info') => {
@@ -79,7 +82,33 @@ const Gallery = ({ onBack }) => {
         item['.tag'] === 'file' &&
         (item.name.match(/\.(jpg|jpeg|png|gif|mp4|mov|webm)$/i))
       );
-      setItems(filtered);
+
+      const photos = [];
+      const videos = [];
+
+      // Fetch temporary links for images to use as thumbnails
+      const itemsWithLinks = await Promise.all(filtered.map(async (item) => {
+        const isImage = item.name.match(/\.(jpg|jpeg|png|gif)$/i);
+        if (isImage) {
+          try {
+            const link = await getTemporaryLink(item.path_display);
+            return { ...item, previewUrl: link };
+          } catch (e) {
+            return item;
+          }
+        }
+        return item;
+      }));
+
+      itemsWithLinks.forEach(item => {
+        if (item.name.match(/\.(mp4|mov|webm)$/i)) {
+          videos.push(item);
+        } else {
+          photos.push(item);
+        }
+      });
+
+      setItems({ photos, videos });
     } catch (err) {
       showNotification('Failed to load gallery items', 'error');
     } finally {
@@ -104,21 +133,46 @@ const Gallery = ({ onBack }) => {
     }
   };
 
-  const handleFileUpload = async (e) => {
+  const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    setPendingFile(file);
+    setCustomFileName(file.name.split('.')[0]);
+    setShowUploadModal(true);
+  };
+
+  const confirmUpload = async () => {
+    if (!pendingFile) return;
+
+    const extension = pendingFile.name.split('.').pop();
+    const finalFile = new File([pendingFile], `${customFileName}.${extension}`, { type: pendingFile.type });
 
     setUploading(true);
-    showNotification(`Uploading ${file.name}...`, 'info');
+    setShowUploadModal(false);
+    showNotification(`Uploading ${finalFile.name}...`, 'info');
 
     try {
-      await uploadFile(file);
+      await uploadFile(finalFile);
       showNotification('Upload successful!', 'success');
       fetchItems();
     } catch (err) {
       showNotification('Upload failed', 'error');
     } finally {
       setUploading(false);
+      setPendingFile(null);
+    }
+  };
+
+  const handleDelete = async (path, name) => {
+    if (!window.confirm(`Delete ${name}?`)) return;
+
+    try {
+      showNotification(`Deleting ${name}...`, 'info');
+      await deleteFile(path);
+      showNotification('Deleted successfully', 'success');
+      fetchItems();
+    } catch (err) {
+      showNotification('Delete failed', 'error');
     }
   };
 
@@ -180,6 +234,80 @@ const Gallery = ({ onBack }) => {
     );
   }
 
+  const MediaGrid = ({ items, title, icon: Icon }) => (
+    <div className="mb-20">
+      <div className="flex items-center gap-4 mb-8">
+        <div className="p-3 bg-purple-600/10 rounded-xl text-purple-500">
+          <Icon size={24} />
+        </div>
+        <h3 className="text-2xl font-black uppercase tracking-tighter">{title}</h3>
+        <div className="flex-1 h-[1px] bg-gradient-to-r from-zinc-800 to-transparent" />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+        {items.map((item) => (
+          <motion.div
+            key={item.id}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            whileHover={{ y: -10 }}
+            className="aspect-[4/3] glass-card rounded-3xl overflow-hidden group relative"
+          >
+            {/* Thumbnail/Preview */}
+            {item.previewUrl ? (
+              <img
+                src={item.previewUrl}
+                alt={item.name}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-zinc-900 flex items-center justify-center">
+                <Video size={48} className="text-zinc-800" />
+              </div>
+            )}
+
+            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-between p-6">
+              <div className="flex justify-end">
+                <button
+                  onClick={() => handleDelete(item.path_display, item.name)}
+                  className="p-3 bg-red-500/20 text-red-500 border border-red-500/30 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-lg"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+
+              <div>
+                <h4 className="text-white font-bold truncate text-base uppercase mb-1">{item.name}</h4>
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handlePreview(item.path_display)}
+                      className="px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white font-bold text-[10px] uppercase hover:bg-white hover:text-black transition-all"
+                    >
+                      View
+                    </button>
+                    <button
+                      onClick={() => handleDownload(item.path_display, item.name)}
+                      className="p-2 bg-purple-600 rounded-xl text-white hover:bg-purple-700 transition-all"
+                    >
+                      <Download size={14} />
+                    </button>
+                  </div>
+                  <span className="text-zinc-400 text-[10px] font-bold">{(item.size / 1024 / 1024).toFixed(1)}MB</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Content info for non-hover state */}
+            <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent group-hover:opacity-0 transition-opacity">
+              <p className="text-[10px] font-black text-white/70 uppercase tracking-widest truncate">{item.name}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <Section id="gallery" title="The Gallery">
       {/* Toast Notification */}
@@ -199,6 +327,55 @@ const Gallery = ({ onBack }) => {
         )}
       </AnimatePresence>
 
+      {/* Upload Modal */}
+      <AnimatePresence>
+        {showUploadModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowUploadModal(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative glass-card p-10 rounded-[3rem] w-full max-w-md border border-purple-500/30"
+            >
+              <h3 className="text-2xl font-black mb-6 uppercase">Name your media</h3>
+              <div className="space-y-6">
+                <div>
+                  <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest ml-2 mb-2 block">Filename</label>
+                  <input
+                    type="text"
+                    value={customFileName}
+                    onChange={(e) => setCustomFileName(e.target.value)}
+                    className="w-full bg-black border border-zinc-800 p-5 rounded-2xl text-white outline-none focus:border-purple-500/50 transition-all"
+                    placeholder="Enter name..."
+                  />
+                </div>
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => setShowUploadModal(false)}
+                    className="flex-1 bg-zinc-900 p-5 rounded-2xl font-bold uppercase text-xs tracking-widest hover:bg-zinc-800 transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={confirmUpload}
+                    className="flex-[2] bg-purple-600 p-5 rounded-2xl font-bold uppercase text-xs tracking-widest hover:bg-purple-700 transition-all glow-purple"
+                  >
+                    Upload Now
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
         <button onClick={onBack} className="text-purple-500 font-bold flex items-center gap-2">← Back Home</button>
 
@@ -206,7 +383,7 @@ const Gallery = ({ onBack }) => {
           <input
             type="file"
             ref={fileInputRef}
-            onChange={handleFileUpload}
+            onChange={handleFileSelect}
             className="hidden"
             accept="image/*,video/*"
           />
@@ -216,7 +393,7 @@ const Gallery = ({ onBack }) => {
             className="flex-1 md:flex-none flex items-center justify-center gap-3 bg-purple-600/10 border border-purple-500/30 px-6 py-4 rounded-2xl font-bold text-purple-500 hover:bg-purple-600 hover:text-white transition-all active:scale-95 disabled:opacity-50"
           >
             {uploading ? <Loader2 size={18} className="animate-spin" /> : <Upload size={18} />}
-            {uploading ? 'Uploading...' : 'Upload Media'}
+            {uploading ? 'Processing...' : 'Upload Media'}
           </button>
         </div>
       </div>
@@ -224,54 +401,21 @@ const Gallery = ({ onBack }) => {
       {loading ? (
         <div className="flex-1 flex flex-col items-center justify-center py-20">
           <Loader2 size={48} className="text-purple-500 animate-spin mb-4" />
-          <p className="text-zinc-500 font-bold uppercase tracking-widest">Accessing Secure Vault...</p>
+          <p className="text-zinc-500 font-bold uppercase tracking-widest text-sm">Synchronizing Cloud...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-          {items.map((item) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              whileHover={{ y: -10 }}
-              className="aspect-[4/3] glass-card rounded-3xl overflow-hidden group relative"
-            >
-              <div className="absolute inset-0 bg-zinc-900/50 group-hover:bg-purple-900/40 transition-all duration-500" />
+        <div className="space-y-12">
+          {items.photos.length > 0 && (
+            <MediaGrid items={items.photos} title="Captured Moments" icon={ImageIcon} />
+          )}
 
-              <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                <div className="mb-4">
-                  {item.name.match(/\.(mp4|mov|webm)$/i) ?
-                    <Video size={24} className="text-purple-500 mb-2" /> :
-                    <ImageIcon size={24} className="text-purple-500 mb-2" />
-                  }
-                  <h4 className="text-white font-bold truncate text-lg uppercase tracking-tight">{item.name}</h4>
-                  <p className="text-zinc-500 text-xs font-bold">{(item.size / 1024 / 1024).toFixed(2)} MB</p>
-                </div>
+          {items.videos.length > 0 && (
+            <MediaGrid items={items.videos} title="Motion Gallery" icon={Video} />
+          )}
 
-                <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
-                  <button
-                    onClick={() => handlePreview(item.path_display)}
-                    className="flex-1 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl text-white font-bold text-xs uppercase hover:bg-white hover:text-black transition-all"
-                  >
-                    Preview
-                  </button>
-                  <button
-                    onClick={() => handleDownload(item.path_display, item.name)}
-                    className="p-4 bg-purple-600 rounded-2xl text-white hover:bg-purple-700 transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)]"
-                  >
-                    <Download size={18} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Decorative Corner Glow */}
-              <div className="absolute -top-10 -right-10 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all duration-500" />
-            </motion.div>
-          ))}
-
-          {items.length === 0 && (
-            <div className="col-span-full py-20 text-center">
-              <p className="text-zinc-500 font-bold uppercase tracking-widest">No media files found in Dropbox folder.</p>
+          {items.photos.length === 0 && items.videos.length === 0 && (
+            <div className="py-20 text-center">
+              <p className="text-zinc-500 font-bold uppercase tracking-widest text-sm">The vault is currently empty.</p>
             </div>
           )}
         </div>
