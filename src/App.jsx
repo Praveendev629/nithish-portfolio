@@ -68,6 +68,7 @@ const Gallery = ({ onBack }) => {
   const [pendingFile, setPendingFile] = useState(null);
   const [customFileName, setCustomFileName] = useState('');
   const [activeTab, setActiveTab] = useState('photos');
+  const [previewItem, setPreviewItem] = useState(null);
   const fileInputRef = useRef(null);
 
   const showNotification = (message, type = 'info') => {
@@ -177,12 +178,14 @@ const Gallery = ({ onBack }) => {
     }
   };
 
-  const handlePreview = async (path) => {
+  const handlePreview = async (path, name) => {
     try {
+      showNotification('Opening preview...', 'info');
       const link = await getTemporaryLink(path);
-      window.open(link, '_blank');
+      const isVideo = name.match(/\.(mp4|mov|webm)$/i);
+      setPreviewItem({ link, name, isVideo, path });
     } catch (err) {
-      showNotification('Failed to generate preview link', 'error');
+      showNotification('Failed to generate preview', 'error');
     }
   };
 
@@ -282,7 +285,7 @@ const Gallery = ({ onBack }) => {
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex gap-2">
                     <button
-                      onClick={() => handlePreview(item.path_display)}
+                      onClick={() => handlePreview(item.path_display, item.name)}
                       className="px-3 py-1.5 md:px-4 md:py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white font-bold text-[9px] md:text-[10px] uppercase hover:bg-white hover:text-black transition-all active:scale-95"
                     >
                       View
@@ -374,6 +377,73 @@ const Gallery = ({ onBack }) => {
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      {/* Media Preview Modal */}
+      <AnimatePresence>
+        {previewItem && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100000] flex items-center justify-center p-4 md:p-10 bg-black/95 backdrop-blur-2xl"
+            onClick={() => setPreviewItem(null)}
+          >
+            <motion.button
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="absolute top-6 right-6 md:top-10 md:right-10 p-4 bg-white/10 text-white rounded-2xl hover:bg-white hover:text-black transition-all z-[100001]"
+              onClick={() => setPreviewItem(null)}
+            >
+              <X size={24} />
+            </motion.button>
+
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-w-7xl w-full max-h-full flex flex-col items-center gap-6"
+            >
+              <div className="w-full flex items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/50 shadow-2xl relative">
+                {previewItem.isVideo ? (
+                  <video
+                    src={previewItem.link}
+                    controls
+                    autoPlay
+                    className="max-w-full max-h-[75vh] h-auto shadow-2xl"
+                  />
+                ) : (
+                  <img
+                    src={previewItem.link}
+                    alt={previewItem.name}
+                    className="max-w-full max-h-[75vh] h-auto object-contain shadow-2xl"
+                  />
+                )}
+              </div>
+
+              <div className="flex flex-col items-center gap-2">
+                <h3 className="text-white font-black text-xl md:text-2xl uppercase tracking-tighter text-center">
+                  {previewItem.name}
+                </h3>
+                <div className="flex gap-4 mt-2">
+                  <button
+                    onClick={() => handleDownload(previewItem.path, previewItem.name)}
+                    className="flex items-center gap-2 bg-purple-600 px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-purple-700 transition-all active:scale-95"
+                  >
+                    <Download size={14} /> Download
+                  </button>
+                  <button
+                    onClick={() => setPreviewItem(null)}
+                    className="px-6 py-3 bg-white/10 rounded-xl text-white font-bold text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
 
