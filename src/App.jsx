@@ -458,6 +458,91 @@ const Gallery = ({ onBack }) => {
   );
 };
 
+const CyclingAnimation = () => {
+  return (
+    <div className="relative w-full h-32 overflow-hidden border-t border-zinc-900 bg-black/50">
+      {/* Moving Tree Shadows */}
+      <div className="absolute inset-0 flex">
+        {[...Array(10)].map((_, i) => (
+          <motion.div
+            key={i}
+            initial={{ x: '100vw' }}
+            animate={{ x: '-20vw' }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              delay: i * 1.2,
+              ease: "linear"
+            }}
+            className="absolute top-0 w-32 h-full"
+          >
+            <div className="w-full h-full bg-gradient-to-b from-purple-900/5 via-purple-900/10 to-transparent skew-x-[-20deg] blur-xl" />
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Road line */}
+      <div className="absolute bottom-6 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-zinc-800 to-transparent" />
+
+      {/* Boy and Girl Cycling */}
+      <motion.div
+        animate={{
+          y: [0, -4, 0],
+          rotate: [0, -1, 1, 0]
+        }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10"
+      >
+        <svg width="120" height="80" viewBox="0 0 120 80" className="drop-shadow-[0_0_15px_rgba(168,85,247,0.4)]">
+          {/* Bicycle Wheels */}
+          <circle cx="35" cy="65" r="12" fill="none" stroke="currentColor" strokeWidth="2" className="text-zinc-700" />
+          <circle cx="85" cy="65" r="12" fill="none" stroke="currentColor" strokeWidth="2" className="text-zinc-700" />
+
+          {/* Bicycle Frame */}
+          <path d="M35 65 L60 65 L80 40 L50 40 Z" fill="none" stroke="currentColor" strokeWidth="2" className="text-purple-600" />
+          <path d="M60 65 L60 40" fill="none" stroke="currentColor" strokeWidth="2" className="text-purple-600" />
+
+          {/* Boy (Back) */}
+          <g className="text-white">
+            <circle cx="55" cy="25" r="6" fill="currentColor" /> {/* Head */}
+            <path d="M55 31 L55 50 L45 60" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round" /> {/* Body & Legs */}
+            <path d="M55 35 L70 45" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" /> {/* Arm */}
+          </g>
+
+          {/* Girl (Front) */}
+          <g className="text-purple-400">
+            <circle cx="75" cy="20" r="5" fill="currentColor" /> {/* Head */}
+            <path d="M75 25 L75 45 L85 55" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round" /> {/* Body & Legs */}
+            <path d="M75 30 L90 40" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" /> {/* Arm */}
+          </g>
+        </svg>
+      </motion.div>
+
+      {/* Particle dust */}
+      <div className="absolute inset-0">
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            initial={{ x: '100vw', y: 70 + Math.random() * 10 }}
+            animate={{ x: '-10vw' }}
+            transition={{
+              duration: Math.random() * 3 + 2,
+              repeat: Infinity,
+              delay: Math.random() * 5,
+              ease: "linear"
+            }}
+            className="absolute w-1 h-1 bg-purple-500/20 rounded-full blur-[1px]"
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const App = () => {
   const [navOpen, setNavOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
@@ -677,7 +762,6 @@ const App = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
       <main className="flex-grow">
         <AnimatePresence mode="wait">
           <motion.div key={currentPage} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }}>
@@ -686,14 +770,69 @@ const App = () => {
         </AnimatePresence>
       </main>
 
-      <footer className="py-20 border-t border-zinc-900 px-6 bg-black mt-auto">
-        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
-          <div className="text-2xl font-black text-purple-500">NITHISH<span className="text-white">.T</span></div>
-          <p className="text-zinc-600 font-medium">© 2026 Crafted with precision and soul.</p>
-          <div className="flex gap-8 text-zinc-500 font-bold uppercase tracking-widest text-xs">
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
-            <a href="#" className="hover:text-white transition-colors">Cookies</a>
+      <footer className="pt-20 border-t border-zinc-900 bg-black mt-auto relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-600/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/5 rounded-full blur-[120px] pointer-events-none" />
+
+        <div className="container mx-auto px-6 mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-16 items-start">
+            <div className="md:col-span-5 space-y-8">
+              <div className="text-3xl font-black text-purple-500 tracking-tighter">NITHISH<span className="text-white">.T</span></div>
+              <p className="text-xl text-zinc-500 font-medium leading-relaxed max-w-sm">
+                Transforming complex ideas into elegant digital realities. Let's build something extraordinary together.
+              </p>
+              <div className="flex gap-6">
+                {[Github, Linkedin, Instagram].map((Icon, i) => (
+                  <motion.a
+                    key={i}
+                    whileHover={{ y: -5, scale: 1.1 }}
+                    href="#"
+                    className="p-4 bg-zinc-900 rounded-2xl text-purple-500 hover:text-white hover:bg-purple-600 transition-all"
+                  >
+                    <Icon size={20} />
+                  </motion.a>
+                ))}
+              </div>
+            </div>
+
+            <div className="md:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-10">
+              <div className="space-y-6">
+                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white">Navigation</h4>
+                <ul className="space-y-4 text-zinc-500 font-bold text-sm">
+                  {['Home', 'About', 'Gallery', 'Apps'].map(item => (
+                    <li key={item}><button onClick={() => setCurrentPage(item.toLowerCase())} className="hover:text-purple-500 transition-colors uppercase tracking-widest">{item}</button></li>
+                  ))}
+                </ul>
+              </div>
+              <div className="space-y-6">
+                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white">Contact</h4>
+                <ul className="space-y-4 text-zinc-500 font-bold text-sm">
+                  <li className="hover:text-white transition-colors cursor-pointer">praveendev629@gmail.com</li>
+                  <li className="hover:text-white transition-colors cursor-pointer">+91 8122699623</li>
+                  <li className="hover:text-white transition-colors cursor-pointer">Tamil Nadu, India</li>
+                </ul>
+              </div>
+              <div className="col-span-2 md:col-span-1 space-y-6">
+                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-white">Updates</h4>
+                <div className="relative group">
+                  <input type="email" placeholder="Your email" className="w-full bg-zinc-900 border border-zinc-800 p-4 rounded-2xl text-white text-xs outline-none focus:border-purple-500/50 transition-all" />
+                  <button className="absolute right-2 top-2 p-2 bg-purple-600 rounded-xl text-white hover:bg-purple-700 transition-all"><Send size={16} /></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <CyclingAnimation />
+
+        <div className="py-10 border-t border-zinc-900/50 px-6 bg-zinc-950/50 relative z-20">
+          <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <p className="text-zinc-600 font-bold uppercase tracking-tighter text-[10px]">© 2026 Crafted with precision and soul.</p>
+            <div className="flex gap-8 text-[10px] text-zinc-500 font-black uppercase tracking-widest">
+              <a href="#" className="hover:text-purple-500 transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-purple-500 transition-colors">Terms of Service</a>
+            </div>
           </div>
         </div>
       </footer>
