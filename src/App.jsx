@@ -218,7 +218,7 @@ const Gallery = ({ onBack }) => {
               <Lock size={40} className="text-purple-500" />
             </div>
             <h3 className="text-2xl font-bold mb-4">Encrypted Gallery</h3>
-            <p className="text-zinc-500 mb-8">Access is restricted. Please provide the 4-digit security key to view private content.</p>
+            <p className="text-zinc-500 mb-8">Access is restricted. Please provide the unique security key to view private content.</p>
             <form onSubmit={handleUnlock} className="flex flex-col gap-4">
               <input
                 type="password"
