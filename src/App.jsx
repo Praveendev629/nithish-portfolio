@@ -699,21 +699,21 @@ const App = () => {
         );
       default:
         return (
-          <section id="home" className="relative h-screen flex items-center overflow-hidden">
+          <section id="home" className="relative min-h-screen flex items-center overflow-hidden py-20 px-6">
             <div className="absolute inset-0 bg-black" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(139,92,246,0.15),transparent_60%)]" />
-            <div className="absolute right-0 bottom-0 h-full w-[50%] md:w-[45%] z-20 pointer-events-none overflow-hidden">
+            <div className="absolute right-0 bottom-0 h-full w-[70%] md:w-[45%] z-0 pointer-events-none overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-l from-purple-900/10 via-transparent to-transparent z-10" />
               <motion.img initial={{ x: 150, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }} src={nithishImg} alt="Nithish" className="h-full object-contain object-right-bottom" style={{ maskImage: 'linear-gradient(to left, black 60%, transparent 95%), linear-gradient(to top, black 80%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to left, black 60%, transparent 95%), linear-gradient(to top, black 80%, transparent 100%)' }} />
             </div>
-            <div className="container mx-auto px-6 z-10 grid grid-cols-1 md:grid-cols-12 items-center h-full">
-              <div className="md:col-span-6 pt-20">
+            <div className="container mx-auto z-10 grid grid-cols-1 md:grid-cols-12 items-center h-full">
+              <div className="md:col-span-6">
                 <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} className="flex items-center gap-2 text-purple-500 font-bold mb-6"><Sparkles size={18} /><span className="tracking-widest uppercase text-xs md:text-sm">Welcome to my universe</span></motion.div>
                 <div className="overflow-hidden"><motion.h1 initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }} className="text-4xl md:text-6xl lg:text-7xl font-black leading-none tracking-tighter mb-8"><span className="block mb-2">NITHISH</span><span className="text-gradient block">DESIGNER.</span></motion.h1></div>
                 <motion.div initial={{ y: 30, opacity: 0 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5 }} className="flex flex-col md:flex-row gap-8 items-start md:items-center max-w-lg"><p className="text-lg md:text-xl text-zinc-400 font-medium leading-relaxed">Crafting digital experiences where art meets technology. Focused on building the future of the web.</p></motion.div>
 
-                {/* Navigation cards grid at bottom - mobile stack one by one */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-2xl mt-12">
+                {/* Fixed Navigation cards grid - 2 columns on mobile for better fit */}
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-2xl mt-12 relative z-20">
                   {navItems.map((item, i) => (
                     <motion.button
                       key={item.name}
@@ -721,10 +721,10 @@ const App = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.6 + (i * 0.1) }}
-                      className="glass-card p-5 flex flex-col items-center justify-center gap-3 group hover:border-purple-500/50 transition-all active:scale-95"
+                      className="glass-card p-4 md:p-5 flex flex-col items-center justify-center gap-3 group hover:border-purple-500/50 transition-all active:scale-95"
                     >
-                      <item.icon className="text-purple-500 group-hover:scale-110 transition-transform" size={20} />
-                      <span className="text-[10px] font-black tracking-widest text-zinc-400 group-hover:text-white transition-colors uppercase">
+                      <item.icon className="text-purple-500 group-hover:scale-110 transition-transform" size={18} />
+                      <span className="text-[10px] font-black tracking-widest text-zinc-400 group-hover:text-white transition-colors uppercase truncate w-full text-center px-1">
                         {item.name}
                       </span>
                     </motion.button>
