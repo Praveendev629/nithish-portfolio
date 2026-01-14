@@ -564,59 +564,6 @@ const WaterAnimation = () => {
           <path d="M0,80C200,60,400,100,600,100C800,100,1000,60,1200,60L1440,80L1440,0L0,0Z" />
         </motion.svg>
       </div>
-
-      {/* Realistic Rare Upward Splashes */}
-      {[0, 1].map(side => (
-        <div key={side} className={`absolute top-0 ${side === 0 ? 'left-0' : 'right-0'} w-48 h-full z-20`}>
-          {[...Array(10)].map((_, j) => (
-            <motion.div
-              key={j}
-              initial={{ opacity: 0, y: 100, x: side === 0 ? 0 : 48 }}
-              animate={{
-                opacity: [0, 1, 0],
-                y: [100, -150 - Math.random() * 200], // Splash UPWARDS deep into the page
-                x: side === 0 ? [0, 40 + Math.random() * 80] : [48, -40 - Math.random() * 80],
-                scale: [0.1, 1.2, 0],
-              }}
-              transition={{
-                duration: 2.5 + Math.random() * 2,
-                repeat: Infinity,
-                repeatDelay: 2 + Math.random() * 8, // Make splashes rare
-                delay: j * 0.4,
-                ease: "easeOut"
-              }}
-              className="absolute w-1.5 h-1.5 bg-white/40 rounded-full shadow-[0_0_10px_white]"
-            />
-          ))}
-
-          {/* Subtle Mist */}
-          <motion.div
-            animate={{ opacity: [0, 0.2, 0] }}
-            transition={{ duration: 6, repeat: Infinity, repeatDelay: 4 }}
-            className={`absolute top-0 ${side === 0 ? 'left-0' : 'right-0'} w-64 h-64 bg-purple-400/10 rounded-full blur-[80px] pointer-events-none`}
-          />
-        </div>
-      ))}
-
-      {/* Surface Droplets and Ripples */}
-      {[...Array(25)].map((_, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, scale: 0, x: Math.random() * 100 + '%', y: 0 }}
-          animate={{
-            opacity: [0, 0.6, 0],
-            scale: [0, 2, 0],
-            y: [0, 40 + Math.random() * 40]
-          }}
-          transition={{
-            duration: 3 + Math.random() * 3,
-            repeat: Infinity,
-            delay: Math.random() * 15,
-            ease: "easeInOut"
-          }}
-          className="absolute top-4 w-1 h-1 bg-white/20 rounded-full blur-[0.5px]"
-        />
-      ))}
     </div>
   );
 };
